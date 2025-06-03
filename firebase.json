@@ -5,6 +5,7 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
+    "site": "cobaquatics",
     "public": "public",
     "ignore": [
       "firebase.json",
