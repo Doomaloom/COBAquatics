@@ -1,138 +1,82 @@
-/* copy over your `<style>` block from the old upload.html */
-body {
-  font-family: Arial, sans-serif;
+* {
   margin: 0;
   padding: 0;
-  background-color: #f3f3f5;
-  color: #333;
+  box-sizing: border-box;
+  font-family: 'Rubik', sans-serif;
+
 }
 
-h1 {
-  text-align: center;
-  margin: 1rem 0;
+
+:root {
+  --primary-color: #3498db;
+  --secondary-color: #933e00;
+  --accent-color: #fece69;
+  --text-color: #333;
+  --bg-color: #f8f9fa;
+  --header-color: #c45300;
+  --border-radius: 8px;
+  --transition: all 0.3s ease;
 }
 
-form {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 1rem;
-  background: #fff;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  border-radius: 8px;
-}
 
-/* Services */
-.services {
+
+header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 1rem;
-  padding: 2rem;
+  align-items: center;
+  padding: 1vw;
+  background-color: var(--header-color);
+  border-radius: 1rem;
+  margin: 1rem;
 }
 
-.service_button {
-  flex: 1;
-  background: #3498db;
-  color: #fff;
+
+
+.logo {
+  color: var(--accent-color);
+  font-size: 2vw;
+  line-height: 1;
+  padding: 1rem 1rem;
+  max-width: 8rem;
+  background-color: var(--header-color);
+}
+
+.logo a{
+  text-decoration: none;
+  color: var(--accent-color);
+  width: 100%;
+  height: 100%;
+}
+
+.sign-in-out button{
+  font-size: 2vw;
   border: none;
-  padding: 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  text-align: center;
-  margin-right: 0.5rem;
+  background-color: var(--secondary-color);
+  text-decoration: none;
+  color: white;
+  padding: 2rem 1rem;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  margin: 1rem;
 }
 
-/* Drop zone */
-.drop-zone {
-  border: 2px dashed #999;
-  border-radius: 10px;
-  padding: 2rem;
-  text-align: center;
-  margin-bottom: 1rem;
-  background-color: #fff;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-.drop-zone.hover {
-  background-color: #e8e8e8;
+
+
+
+.sign-in-out button:hover,
+.sign-in-out button:active {
+  background-color: var(--primary-color);
+  transform: translateY(-2px);
 }
 
-#file-status {
-  text-align: center;
-  margin-bottom: 1rem;
-  font-style: italic;
+.welcome-message {
+  font-size: 2.5vw;
+  color: white;
+  background-color: var(--header-color);
 }
 
-/* Layout panels */
-.main-container {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-.panel-left, .panel-right {
-  flex: 1;
-  background: #f1f1f1;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 0 5px rgba(0,0,0,0.05);
+.welcome-message span {
+  font-weight: bold;
+  background-color: var(--header-color);
 }
 
-.panel-left h2, .panel-right h2 {
-  margin-top: 0;
-}   
-
-/* Instructor entries */
-.instructor-entry {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-.instructor-entry input {
-  flex: 1;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-.remove-btn {
-  background: #e74c3c;
-  color: #fff;
-  border: none;
-  padding: 0 0.75rem;
-  border-radius: 4px;
-  cursor: pointer;
-}
-.remove-btn:hover {
-  background: #c0392b;
-}
-
-.add-btn, .submit-btn {
-  background: #3498db;
-  color: #fff;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-}
-.add-btn:hover, .submit-btn:hover {
-  background: #2980b9;
-}
-
-/* Remember panel */
-.remember-panel {
-  margin-bottom: 1rem;
-  padding: 1rem;
-  background: #f9f9f9;
-  border-radius: 4px;
-}
-
-/* Checkbox labels */
-.remember-panel label, .panel-right label {
-  display: block;
-  margin-bottom: 0.5rem;
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-  .main-container {
-    flex-direction: column;
-  }
-}

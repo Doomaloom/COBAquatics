@@ -4,25 +4,107 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+
     <title>Home</title>
+
+    <link rel="stylesheet" href="css/home.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/login.css">
+
+    <script src="js/app.js" type="module" defer></script>
 
 </head> 
 <body>
-    <div class="container">
-        <header>
-            <nav>
-                <div class="logo">MyApp</div>
-                <ul class="nav-links">
-                    <li><a href="#/" data-route="home">Home</a></li>
-                    <li><a href="#/about" data-route="about">About</a></li>
-                    <li><a href="#/services" data-route="services">Services</a></li>
-                    <li><a href="#/contact" data-route="contact">Contact</a></li>
-                </ul>
-            </nav>
-        </header>
 
-        <main id="app">
-            <div class="loading">Loading...</div>
-        </main>
+  <header id="header">
+    <div class="logo">
+        <a href="index.html"><h1>COB <br> AQUATICS</h1></a>
     </div>
+    <div class="welcome-message">
+        <p>Welcome, <span id="username">Guest</span></p>
+    </div>
+    <div class="sign-in-out">
+        <button id="sign-out-button">Sign Out</button>
+    </div>
+</header>
+
+    <main id="app">
+        <section id="signed-in" hidden>
+            <div class="container">
+                <div class="pages-grid">
+                    <div class="page-card">
+                        <a href="#/myteam">My Team</a>
+                    </div>
+                    <div class="page-card">
+                        <a href="#/schematic">Schematic</a>
+                    </div>
+                    <div class="page-card">
+                        <a href="masterlist.html">Master List</a>
+                    </div>
+                    <div class="page-card">
+                        <a href="roster.html">Roster</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="signed-out">
+            <div class="container-sign-in">
+                <div class="container-sign-in-text">
+                    <h2>Welcome to COB Aquatics</h2>
+                </div>
+                <div class="container-sign-in-form">
+                    <!-- Login Form -->
+                    <form id="login-form" class="active" action="#" method="POST">
+                      <h2>Login</h2>
+                      <div class="input-group">
+                        <label for="login-username">Email</label>
+                        <input type="text" id="login-email" name="username" required>
+                      </div>
+                      <div class="input-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" name="password" required>
+                      </div>
+                      <button type="submit" class="btn" id = "sign-in-button">Login</button>
+                      <p class="toggle-link">Don't have an account? <a href="#" id="show-signup">Sign up</a></p>
+                    </form>
+                    <!-- Signup Form -->
+                    <form id="signup-form" action="#" method="POST" hidden>
+                      <h2>Sign Up</h2>
+                      <div class="input-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" name="email" required>
+                      </div>
+                      <div class="input-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" name="password" required>
+                      </div>
+                      <button type="submit" class="btn" id = "sign-up-button">Sign Up</button>
+                      <p class="toggle-link">Already have an account? <a href="#" id="show-login">Login</a></p>
+                    </form>
+                  </div>
+                  <script>
+                    // Toggle between login and signup
+                    const loginForm = document.getElementById('login-form');
+                    const signupForm = document.getElementById('signup-form');
+                    document.getElementById('show-signup').addEventListener('click', e => {
+                      e.preventDefault();
+                      loginForm.classList.remove('active');
+                      signupForm.classList.add('active');
+                    });
+                    document.getElementById('show-login').addEventListener('click', e => {
+                      e.preventDefault();
+                      signupForm.classList.remove('active');
+                      loginForm.classList.add('active');
+                    });
+                  </script>
+            </div>
+            
+        </section>
+    </main>
+
+</body>
+</html>
