@@ -5,6 +5,7 @@
   <title>COB Aquatics</title>
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/masterlist.css">
   <script type="module" defer src="js/pages/masterlist.js"></script>
 </head>
 <body>
@@ -14,36 +15,35 @@
         <a href="index.html"><h1>COB <br> AQUATICS</h1></a>
     </div>
     <div class="welcome-message">
+        <h2>Master List Maker</h2>
         <p>Welcome, <span id="username">Guest</span></p>
     </div>
     <div class="sign-in-out">
         <button id="sign-out-button">Sign Out</button>
     </div>
 </header>
-
+  <div class="main-content">
     <div class="services" id="services">
+      <div class="service_button">
+        <a class="notcurrent" href="myteams.html">My Teams</a>
+    </div>
         <div class="service_button">
-            <a href="schematic.html">Schematic</a>
+            <a class="notcurrent" href="schematic.html">Schematic</a>
         </div>
         <div class="service_button">
-            <a href="masterlist.html">Master List</a>
+            <a class="current" href="masterlist.html">Master List</a>
         </div>
         <div class="service_button">
-            <a href="class_rosters.html">Class Rosters</a>
+            <a class="notcurrent" href="class_rosters.html">Rosters</a>
         </div>
     </div>
-    <div id="header">
-      <!--<img src="icon.png" alt="COB Aquatics Logo" id="logo" width="100" height="100">-->
-      <h1>Master List Maker</h1>
-    </div>
-  <form id="upload-form" action="/upload" method="POST" enctype="multipart/form-data">
+  <form id="upload-form" action="/" method="POST" enctype="multipart/form-data">
     <!-- Drag & drop / file selector -->
     <div id="drop-zone" class="drop-zone">
       <p>Drag & Drop your .csv file here or click to select</p>
-      <input id="file-input" type="file" name="csv_file" accept=".csv" hidden required>
+      <input id="file-input" type="file" name="csv_file" accept=".csv" style="display:none" required>
     </div>
     <div id="file-status">No file selected.</div>
-
     <!-- Main panels -->
     <div class="main-container">
       <!-- Instructors panel -->
@@ -89,7 +89,8 @@
       <label><input type="checkbox" id="remember_formatting"> Remember Formatting Options</label>
     </div>
 
-    <button type="submit" class="submit-btn">Submit</button>
+    <button type="submit" class="submit-btn">Create Master List</button>
   </form>
+  </div>
 </body>
 </html>

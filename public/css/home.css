@@ -11,7 +11,7 @@
     --secondary-color: #2c3e50;
     --accent-color: #e74c3c;
     --text-color: #333;
-    --bg-color: #f8f9fa;
+    --bg-color: #fff7de;
     --border-radius: 8px;
     --transition: all 0.3s ease;
 }
@@ -20,7 +20,7 @@ body {
    
     line-height: 1.6;
     color: var(--text-color);
-    background-color: #fff7de;
+    background-color: var(--bg-color);
 }
 
 .container {

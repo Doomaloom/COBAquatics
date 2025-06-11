@@ -1,0 +1,120 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Rubik', sans-serif;
+  }
+
+body {
+    background-color: var(--bg-color);
+}
+
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #933e00;
+    --accent-color: #fece69;
+    --text-color: #333;
+    --bg-color: #fff7de;
+    --header-color: #c45300;
+    --border-radius: 8px;
+    --transition: all 0.3s ease;
+  }
+
+
+.services {
+    display: flex;
+    flex-direction: column;
+    color: white;
+    background-color: var(--header-color);
+    border-radius: 4vw;
+    padding: 2vw;
+    min-width: 13vw;
+    height: 12vw;
+    margin: 2vw;
+    gap: 0.6vw;
+    text-align: center;
+}
+.services a {
+    font-size: 1.4vw;
+    text-decoration: none;
+    border-radius: 1vw;
+    padding: 0.5vw;
+    
+}
+
+.notcurrent {
+    color: var(--accent-color)
+}
+
+.current {
+    background-color: var(--accent-color);
+    color: var(--secondary-color)
+}
+
+.main-content {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin: 2vw;
+}
+
+form {
+    margin-top: 2vw;
+    margin-right: 4vw;
+    width: 100%;
+}
+
+.drop-zone {
+    border: 2px dashed var(--secondary-color);
+    border-radius: 1vw;
+    align-content: center;
+    align-items: center;
+    padding: 2vw;
+    width: 100%;
+    background-color: var(--accent-color);
+    text-align: center;
+    cursor: pointer;
+}
+.drop-zone p {
+    color: var(--secondary-color);
+    font-size: 1.5vw;
+}
+.upload-btn {
+    cursor: pointer;
+}
+
+#file-status {
+    color: var(--secondary-color);
+    font-size: 1.5vw;
+    padding-top: 1vw;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.panel-left {
+    background-color: var(--accent-color);
+    color: var(--secondary-color);
+    border-radius: 2vw;
+    margin: 2vw;
+    padding: 2vw;
+    width: 50%;
+    font-size: 1.5vw;
+}
+
+.panel-right {
+    background-color: var(--accent-color);
+    color: var(--secondary-color);
+    border-radius: 2vw;
+    margin: 2vw;
+    padding:2vw;
+    width: 50%;
+    font-size: 1.5vw;
+}
+
+.option-group {
+    display: flex;
+    flex-direction: column;
+}
