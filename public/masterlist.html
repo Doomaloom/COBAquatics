@@ -4,8 +4,13 @@
   <meta charset="utf-8">
   <title>COB Aquatics</title>
   <link rel="icon" href="favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="css/style.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+
+
   <link rel="stylesheet" href="css/masterlist.css">
+  <link rel="stylesheet" href="css/style.css">
+  
   <script type="module" defer src="js/pages/masterlist.js"></script>
 </head>
 <body>
@@ -26,7 +31,7 @@
     <div class="services" id="services">
       <div class="service_button">
         <a class="notcurrent" href="myteams.html">My Teams</a>
-    </div>
+      </div>
         <div class="service_button">
             <a class="notcurrent" href="schematic.html">Schematic</a>
         </div>
@@ -37,11 +42,11 @@
             <a class="notcurrent" href="class_rosters.html">Rosters</a>
         </div>
     </div>
-  <form id="upload-form" action="/" method="POST" enctype="multipart/form-data">
+  <form id="upload-form">
     <!-- Drag & drop / file selector -->
     <div id="drop-zone" class="drop-zone">
       <p>Drag & Drop your .csv file here or click to select</p>
-      <input id="file-input" type="file" name="csv_file" accept=".csv" style="display:none" required>
+      <input id="file-input" type="file" name="csv_file" accept=".csv" style="opacity: 0;" required>
     </div>
     <div id="file-status">No file selected.</div>
     <!-- Main panels -->
@@ -53,31 +58,29 @@
           <div class="instructor-entry">
             <input type="text" name="instructor_names[]" placeholder="Instructor Name">
             <input type="text" name="instructor_codes[]" placeholder="Classes (comma separated)">
-            <button type="button" class="remove-btn">Remove</button>
+            <button type="button" class="remove-btn" type="button">Remove</button>
           </div>
         </div>
-        <button type="button" class="add-btn" id="add-btn">Add Instructor</button>
+        <button type="button" class="add-btn" id="add-btn" type="button">Add Instructor</button>
       </div>
 
       <!-- Formatting options panel -->
       <div class="panel-right">
         <h2>Formatting Options</h2>
         <div class="option-group">
-          <label><input type="checkbox" id="roster_by_series" name="roster_by_series"> Roster By Series</label>
-          <label><input type="checkbox" id="roster_by_session" name="roster_by_session"> Roster By Session</label>
-          <label><input type="checkbox" id="time_headers" name="time_headers"> Time Headers</label>
-          <label><input type="checkbox" id="course_headers" name="course_headers"> Course Headers</label>
-          <label><input type="checkbox" id="instructor_headers" name="instructor_headers"> Instructor Headers</label>
-          <label><input type="checkbox" id="borders" name="borders"> Borders</label>
+          <button class="option-check" id="time_headers" name="time_headers" type="button"> Time Headers</button>
+          <button class="option-check" id="instructor_headers" name="instructor_headers" type="button"> Instructor Headers</button>
+          <button class="option-check" id="course_headers" name="course_headers" type="button"> Course Headers</button>
+          <button class="option-check" id="borders" name="borders" type="button"> Borders</button>
           <fieldset>
             <legend>Time Header Style</legend>
-            <label><input type="checkbox" id="center_time" name="center_time"> Center</label>
-            <label><input type="checkbox" id="bold_time" name="bold_time"> Bold</label>
+            <button class="option-check" id="center_time" name="center_time" type="button"> Center</button>
+            <button class="option-check" id="bold_time" name="bold_time" type="button"> Bold</button>
           </fieldset>
           <fieldset>
             <legend>Course Header Style</legend>
-            <label><input type="checkbox" id="center_course" name="center_course"> Center</label>
-            <label><input type="checkbox" id="bold_course" name="bold_course"> Bold</label>
+            <button class="option-check" id="center_course" name="center_course" type="button"> Center</button>
+            <button class="option-check" id="bold_course" name="bold_course" type="button"> Bold</button>
           </fieldset>
         </div>
       </div>
@@ -85,8 +88,8 @@
 
     <!-- Remember settings -->
     <div class="remember-panel">
-      <label><input type="checkbox" id="remember_instructors"> Remember Instructors and Classes</label>
-      <label><input type="checkbox" id="remember_formatting"> Remember Formatting Options</label>
+      <button class="option-check" id="remember_instructors" type="button"> Remember Instructors and Classes</button>
+      <button class="option-check" id="remember_formatting" type="button"> Remember Formatting Options</button>
     </div>
 
     <button type="submit" class="submit-btn">Create Master List</button>

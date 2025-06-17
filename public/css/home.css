@@ -6,20 +6,32 @@
 
 }
 
-:root {
+/* :root {
     --primary-color: #3498db;
-    --secondary-color: #2c3e50;
-    --accent-color: #e74c3c;
+    --secondary-color: #933e00;
+    --accent-color: #fece69;
     --text-color: #333;
     --bg-color: #fff7de;
+    --header-color: #c45300;
     --border-radius: 8px;
     --transition: all 0.3s ease;
-}
+  } */
 
+  :root {
+    --primary-color: #007acc;
+    --secondary-color: #005f99;
+    --accent-color: #ffffff;
+    --text-color: #333;
+    --bg-color: #e6f7ff;
+    --header-color: #c45300;
+    --border-radius: 8px;
+    --hover: #00bcd4;
+    --transition: all 0.3s ease;
+
+}
 body {
    
     line-height: 1.6;
-    color: var(--text-color);
     background-color: var(--bg-color);
 }
 

@@ -24,10 +24,44 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-
+const signOutButton = document.getElementById("sign-out-button");
+signOutButton.addEventListener("click", () => {
+  signOut(auth);
+  window.location.href = "index.html";
+});
 
 const addButton = document.getElementById('add-btn');
 addButton.addEventListener('click', addInstructorField);
+
+const toggleBtn = document.getElementsByClassName("option-check");
+Array.from(toggleBtn).forEach(btn => {
+  btn.addEventListener("click", () => {
+    btn.classList.toggle("selected");
+  });
+});
+
+
+const fileStatus = document.getElementById('file-status');
+const fileUpload = document.getElementById('drop-zone');
+const fileInput = document.getElementById('file-input')
+fileInput.addEventListener("change", function() {
+  if (fileInput.files.length) {
+    fileStatus.textContent = "File Uploaded: " + fileInput.files[0].name;
+  }
+})
+
+
+
+
+// Handle dropped files
+fileUpload.addEventListener('drop', function(e) {
+  const dt = e.dataTransfer;
+  const files = dt.files;
+  if (files.length) {
+    fileInput.files = files;
+    fileStatus.textContent = "File Uploaded: " + files[0].name;
+  }
+});
 
 
 // ----- INSTRUCTOR FIELDS MANAGEMENT -----
@@ -54,64 +88,70 @@ function removeInstructorField(div) {
   }
 }
 
-// ----- FORMAT OPTIONS MANAGEMENT -----
-function updateFormattingOptions() {
-  const timeHeaders = document.getElementById('time_headers');
-  const courseHeaders = document.getElementById('course_headers');
-  const boldTime = document.getElementById('bold_time');
-  const centerTime = document.getElementById('center_time');
-  const boldCourse = document.getElementById('bold_course');
-  const centerCourse = document.getElementById('center_course');
+function readIntoDB(csv) {
 
-  boldTime.disabled = !timeHeaders.checked;
-  centerTime.disabled = !timeHeaders.checked;
-  boldCourse.disabled = !courseHeaders.checked;
-  centerCourse.disabled = !courseHeaders.checked;
 }
 
-// ----- POPULATE SAVED SETTINGS FROM COOKIES -----
+function storeInstructors() {
 
-// ----- FILE UPLOAD AND DRAG/DROP HANDLING -----
-function initFileUpload() {
-  const fileInput = document.getElementById('file-input');
-  const dropZone = document.getElementById('drop-zone');
-  const fileStatus = document.getElementById('file-status');
-
-  fileInput.addEventListener('change', () => {
-    fileStatus.textContent = fileInput.files.length
-      ? `File Uploaded: ${fileInput.files[0].name}`
-      : 'No file selected.';
-  });
-
-  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
-    dropZone.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); });
-  });
-  ['dragenter', 'dragover'].forEach(evt => {
-    dropZone.addEventListener(evt, () => dropZone.classList.add('hover'));
-  });
-  ['dragleave', 'drop'].forEach(evt => {
-    dropZone.addEventListener(evt, () => dropZone.classList.remove('hover'));
-  });
-  dropZone.addEventListener('drop', e => {
-    const files = e.dataTransfer.files;
-    if (files.length) {
-      fileInput.files = files;
-      fileStatus.textContent = `File Uploaded: ${files[0].name}`;
-    }
-  });
-  dropZone.addEventListener('click', () => fileInput.click());
 }
 
-// ----- SERIES / SESSION TOGGLE -----
-function initSeriesSessionToggle() {
-  const seriesCb = document.getElementById('roster_by_series');
-  const sessionCb = document.getElementById('roster_by_session');
+function storeFormatOptions() {
 
-  seriesCb.addEventListener('change', () => {
-    if (seriesCb.checked) sessionCb.checked = false;
-  });
-  sessionCb.addEventListener('change', () => {
-    if (sessionCb.checked) seriesCb.checked = false;
-  });
 }
 
+function formatMasterList(e) {
+  
+  e.preventDefault();
+
+  const form = document.getElementById("upload-form");
+  const formData = new FormData(form);
+
+  let formatOptions = [];
+
+  const formatButtons = document.getElementsByClassName("option-check");
+  
+
+  try {
+    Array.from(formatButtons).forEach(btn => {
+      if (btn.classList.contains("selected")) {
+        formatOptions.push(btn.textContent.trim());
+      }
+    });
+
+    Array.from(formatOptions).forEach(opt => {
+      console.log(opt);
+      formData.append("selected_options[]", opt);
+    });
+
+    Array.from(formData).forEach(item => {
+      console.log(item);
+    });
+
+    // Actual API call now
+    fetch("https://csv-formatter-211408734673.us-central1.run.app", {
+      method: "POST",
+      body: formData
+    })
+    .then(response => {
+      if (!response.ok) throw new Error("Request failed");
+      return response.blob(); // if backend sends a file (e.g. Excel)
+    })
+    .then(blob => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "masterlist.xlsx"; // your desired file name
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    URL.revokeObjectURL(url);
+    })
+    
+  } catch (err) {
+    console.error(err);
+  }
+} 
+
+
+document.getElementById("upload-form").addEventListener("submit", formatMasterList);
