@@ -153,7 +153,8 @@ async function readIntoDB(csv, instructors, courseAssignments) {
                 schedule: line_data[SCHEDULE],
                 name: line_data[NAME] + "," + line_data[NAME + 1],
                 phone: line_data[PHONE],
-                instructor: courseMap[line_data[CODE]] ?? ""
+                instructor: courseMap[line_data[CODE]] ?? "",
+                level: line_data[SERVICE_NAME],
               });
             }
             else {
@@ -167,7 +168,8 @@ async function readIntoDB(csv, instructors, courseAssignments) {
                 schedule: line_data[SCHEDULE],
                 name: line_data[NAME] + "," + line_data[NAME + 1],
                 phone: line_data[PHONE],
-                instructor: courseMap[line_data[CODE]] ?? ""
+                instructor: courseMap[line_data[CODE]] ?? "",
+                level: line_data[SERVICE_NAME],
               });
             }
           }

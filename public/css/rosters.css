@@ -1,0 +1,428 @@
+/* Main content layout */
+.main-content {
+    display: flex;
+    flex-direction: row;
+    margin: 2vw;
+    gap: 2vw;
+}
+.button-and-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2vw;
+}
+
+/* Services navigation */
+.services {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    height: fit-content;
+    color: white;
+    background-color: var(--primary-color);
+    border-radius: 24px;
+    padding: 1vw;
+    margin-right: 2vw;
+    margin-top: 0;
+    text-align: center;
+}
+
+.services a {
+    font-size: 1.2vw;
+    text-decoration: none;
+    border-radius: 16px;
+    padding: 0.5vw 1vw;
+    white-space: nowrap;
+    margin: 0.5vw 0;
+    transition: var(--transition);
+}
+
+.service_button {
+    margin: 0.5vw 0;
+}
+
+.service_button a {
+    display: block;
+    width: 100%;
+}
+
+.service_button a:hover {
+    background-color: var(--hover);
+    color: var(--secondary-color);
+}
+
+.notcurrent {
+    color: var(--accent-color);
+}
+
+.current {
+    background-color: var(--accent-color);
+    color: var(--secondary-color);
+}
+
+/* Main content area */
+#main-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2vw;
+    padding: 1vw;
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2vw;
+}
+
+/* Panels */
+.panel {
+    background-color: var(--accent-color);
+    color: var(--secondary-color);
+    border-radius: 24px;
+    padding: 2vw;
+    width: 100%;
+    font-size: 1.2vw;
+}
+
+.panel h2 {
+    color: var(--secondary-color);
+    margin-bottom: 1.5vw;
+    text-align: center;
+}
+
+/* Buttons */
+.btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: 0.8vw 1.5vw;
+    font-size: 1.2vw;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+/* Form elements */
+input[type="text"],
+input[type="date"],
+select {
+    width: 100%;
+    padding: 0.8vw;
+    margin: 0.5vw 0;
+    border: 2px solid var(--secondary-color);
+    border-radius: 16px;
+    background-color: white;
+    font-size: 1.1vw;
+    color: var(--text-color);
+}
+
+/* Table styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1vw 0;
+}
+
+th, td {
+    padding: 1vw;
+    text-align: left;
+    border-bottom: 1px solid var(--secondary-color);
+}
+
+th {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Rosters container */
+
+/* Individual roster card */
+.roster {
+    position: relative;
+    background-color: var(--accent-color);
+    border-radius: 16px;
+    padding: 1.5vw;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 2vw;
+}
+
+.roster:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.roster h2 {
+    color: var(--secondary-color);
+    margin-bottom: 1.5vw;
+    font-size: 1.4vw;
+    text-align: center;
+    padding-bottom: 1vw;
+    border-bottom: 2px solid var(--secondary-color);
+}
+
+/* Print button */
+.print-btn {
+    position: absolute;
+    top: 1.2vw;
+    right: 1.2vw;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5vw 1vw;
+    font-size: 0.9vw;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.4vw;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+/* Student entry */
+.student {
+    background-color: white;
+    border-radius: 12px;
+    padding: 1.2vw;
+    margin-bottom: 1vw;
+    display: grid;
+    grid-template-columns: 2fr 2fr 2fr 1fr 1fr;
+    gap: 0.8vw;
+    align-items: center;
+    transition: background-color 0.2s ease;
+}
+
+.student p {
+    margin: 0;
+    font-size: 1vw;
+    color: var(--text-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Buttons */
+.edit-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6vw 0.8vw;
+    font-size: 0.9vw;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.edit-btn:hover {
+    background-color: var(--secondary-color);
+}
+
+#edit-level {
+    background-color: #4CAF50;
+}
+
+#edit-instructor {
+    background-color: #2196F3;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .main-content {
+        flex-direction: column;
+    }
+    
+    .services {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 2vw;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .service_button {
+        margin: 0.5vw;
+    }
+    
+    .services a {
+        font-size: 2vw;
+        padding: 1vw 2vw;
+    }
+    
+    .panel {
+        font-size: 2vw;
+    }
+    
+    .btn {
+        font-size: 2vw;
+        padding: 1.5vw 2.5vw;
+    }
+}
+
+@media (max-width: 1200px) {
+    #main-content {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+    
+    .roster h2 {
+        font-size: 1.8vw;
+    }
+    
+    .student p {
+        font-size: 1.3vw;
+    }
+    
+    .edit-btn {
+        font-size: 1.1vw;
+        padding: 0.8vw 0.6vw;
+    }
+}
+
+@media (max-width: 768px) {
+    #main-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .roster {
+        padding: 4vw;
+    }
+    
+    .roster h2 {
+        font-size: 5vw;
+    }
+    
+    .student {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto auto;
+        gap: 1.5vw;
+        padding: 3vw;
+    }
+    
+    .student p {
+        font-size: 3.5vw;
+    }
+    
+    .edit-btn {
+        font-size: 3vw;
+        padding: 1.5vw 2vw;
+        grid-column: span 1;
+    }
+    
+    .edit-btn:nth-child(4) {
+        grid-column: 1;
+        grid-row: 3;
+    }
+    
+    .edit-btn:nth-child(5) {
+        grid-column: 2;
+        grid-row: 3;
+    }
+}
+
+/* Print-specific styles */
+@media print {
+    .services,
+    .print-btn,
+    .edit-btn {
+        display: none !important;
+    }
+    
+    .roster {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        margin-bottom: 20px;
+    }
+    
+    body {
+        background: white;
+        color: black;
+    }
+    
+    .roster h2 {
+        color: var(--secondary-color);
+        border-bottom: 2px solid var(--secondary-color);
+    }
+    
+    .student {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
+}
+
+/* Empty state */
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4vw;
+    color: var(--text-color);
+    font-size: 1.2vw;
+}
+
+/* Loading state */
+.loading {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 2vw;
+    color: var(--text-color);
+    font-size: 1.2vw;
+}
+
+/* Animation for loading */
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+.loading::after {
+    content: "...";
+    animation: pulse 1.5s infinite;
+}
+
+.level-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6vw 2.5vw 0.6vw 0.8vw;
+    font-size: 0.9vw;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    text-align-last: center; /* For Firefox */
+    -moz-text-align-last: center; /* For Firefox */
+    -webkit-text-align-last: center; /* For Safari */
+    background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+    background-repeat: no-repeat;
+    background-position: calc(100% - 8px) center;
+    background-size: 16px;
+    transition: background-color 0.2s ease;
+}
+
+/* For Chrome, Safari, Edge, Opera */
+.level-select option {
+    text-align: center;
+}
+
+/* Remove the arrow in IE10 and IE11 */
+.level-select::-ms-expand {
+    display: none;
+}
+.level-select-items {
+    align-items: center;
+}

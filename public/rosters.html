@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rosters</title>
+
+    <link rel="stylesheet" href="css/rosters.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script type="module" defer src="js/pages/roster.js"></script>
+</head>
+<body>
+    <header id="header">
+        <div class="logo">
+            <a href="index.html"><h1>COB <br> AQUATICS</h1></a>
+        </div>
+        <div class="welcome-message">
+            <h2>Class Rosters</h2>
+            <p>Welcome, <span id="username">Guest</span></p>
+        </div>
+        <div class="sign-in-out">
+            <button id="sign-out-button" class="btn">Sign Out</button>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <div class="services" id="services">
+            <div class="service_button">
+                <a class="notcurrent" href="myteams.html">My Teams</a>
+            </div>
+            <div class="service_button">
+                <a class="notcurrent" href="schematic.html">Schematic</a>
+            </div>
+            <div class="service_button">
+                <a class="notcurrent" href="masterlist.html">Master List</a>
+            </div>
+            <div class="service_button">
+                <a class="current" href="rosters.html">Rosters</a>
+            </div>
+        </div>
+
+        <div class="button-and-content">
+            <button type="button" class="btn" id="print-all-btn">Print All</button>
+            <button type="button" class="btn" id="clear-all-btn">Clear All</button>
+            <div id="main-content">
+                <div id="rosters"></div>
+                    <!-- Main content will be dynamically inserted here by roster.js -->
+            </div>
+        </div>
+    </div>
+</body>
+</html>
