@@ -1,25 +1,37 @@
-import { 
-  auth, 
-  db, 
+import {
+  auth,
+  db,
   collection,
-  onAuthStateChanged, 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword, 
-  browserLocalPersistence, 
-  setPersistence, 
-  signOut, 
-  addDoc, 
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  browserLocalPersistence,
+  setPersistence,
+  signOut,
+  addDoc,
   getDocs,
   updateDoc,
   doc,
   getDoc,
-  serverTimestamp, 
-  onSnapshot, 
-  query, 
-  where 
+  serverTimestamp,
+  onSnapshot,
+  query,
+  where
 } from '../firebase.js';
 
-
+const selectDayBtn = document.getElementById("select-day-btn");
+// runs as soon as the script loads
+const savedDay = localStorage.getItem("selectedDay") || "";
+window.day = savedDay;                 // makes existing code continue to work
+selectDayBtn.value = savedDay;         // reflect current choice in the UI
+selectDayBtn.addEventListener("change", () => {
+    window.day = selectDayBtn.value;
+    localStorage.setItem("selectedDay", selectDayBtn.value); // save choice
+    clearRosters();
+    loadRosters();
+    loadInstructors(filterByInstructorBtn, "", "");
+    console.log(selectDayBtn.value);
+});
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
@@ -52,7 +64,7 @@ Array.from(toggleBtn).forEach(btn => {
 const fileStatus = document.getElementById('file-status');
 const fileUpload = document.getElementById('drop-zone');
 const fileInput = document.getElementById('file-input')
-fileInput.addEventListener("change", function() {
+fileInput.addEventListener("change", function () {
   if (fileInput.files.length) {
     fileStatus.textContent = "File Uploaded: " + fileInput.files[0].name;
   }
@@ -62,7 +74,7 @@ fileInput.addEventListener("change", function() {
 
 
 // Handle dropped files
-fileUpload.addEventListener('drop', function(e) {
+fileUpload.addEventListener('drop', function (e) {
   const dt = e.dataTransfer;
   const files = dt.files;
   if (files.length) {
@@ -98,79 +110,164 @@ function removeInstructorField(div) {
 
 async function readIntoDB(csv, instructors, courseAssignments) {
 
-  const SERVICE_NAME = 0;
-  const CODE = 7;
-  const DAY = 4;
-  const TIME = 6;
-  const LOCATION = 15;
-  const SCHEDULE = 8;
-  const NAME = 18;
-  const PHONE = 20;
+
+  let SERVICE_NAME = 0;
+  let CODE = 7;
+  let DAY = 4;
+  let TIME = 6;
+  let LOCATION = 15;
+  let SCHEDULE = 8;
+  let NAME = 18;
+  let PHONE = 20;
+  let series = true;
+  let minisession = false;
 
   const courseMap = {};
 
-  instructors.forEach((instructor, index) => {
-    const courses = courseAssignments[index];
-    courses.split(",").forEach(course => {
-      courseMap[course] = instructor;
+    // Process the form data
+    // The first element is the field name, second is the value
+
+    console.log(instructors);
+    console.log(courseAssignments);
+    // Create the mapping
+    instructors.forEach((instructor, index) => {
+        console.log(instructor);
+        console.log(courseAssignments[index]);
+        const courses = courseAssignments[index];
+        if (courses) {
+            courses.split(',').forEach(course => {
+                console.log("mapping " + course + " to " + instructor);
+                courseMap[course] = instructor;
+            });
+        }
     });
-  });
+
+    console.log('Course Mapping:', courseMap);
 
   const reader = new FileReader();
   reader.onload = (e) => {
     const text = e.target.result;
     const lines = text.split("\n");
 
+    if (!lines[0].includes("EventSchedule")) {
+      SERVICE_NAME = 10;
+      CODE = 0;
+      DAY = 2;
+      TIME = 1;
+      LOCATION = 6;
+      SCHEDULE = 2;
+      NAME = 16;
+      PHONE = 17;
+      series = false;
+    }
+    if (lines[1].includes("Mo,Tu,We,Th,Fr")) {
+      for (let i = 1; i < lines.length - 1; i++) {
+        lines[i] = lines[i].replace("Mo,Tu,We,Th,Fr", "Mo Tu We Th Fr");
+      }
+      minisession = true;
+    }
+
     for (let i = 1; i < lines.length - 1; i++) {
       const line_data = lines[i].split(",");
-      console.log(line_data[NAME] + "," + line_data[NAME + 1]);
+      if (minisession) {
+        line_data[DAY] = "Mo,Tu,We,Th,Fr";
+      }
+
       onAuthStateChanged(auth, async (user) => {
         if (user) {
-          let studentsRef = collection(db, "students"); 
+          let studentsRef = collection(db, "students");
           try {
-            const q = query(
-              collection(db, "students"),
-              where("uid", "==", user.uid),
-              where("service_name", "==", line_data[SERVICE_NAME]),
-              where("code", "==", line_data[CODE]),
-              where("day", "==", line_data[DAY]),
-              where("time", "==", line_data[TIME]),
-              where("location", "==", line_data[LOCATION]),
-              where("schedule", "==", line_data[SCHEDULE]),
-              where("name", "==", line_data[NAME] + "," + line_data[NAME + 1]),
-              where("phone", "==", line_data[PHONE])              
-            );
-            const docSnap = await getDocs(q);
-            if (docSnap.docs.length > 0) {
-              const docRef = docSnap.docs[0].ref;
-              await updateDoc(docRef, {
-                uid: user.uid,
-                service_name: line_data[SERVICE_NAME],
-                code: line_data[CODE],
-                day: line_data[DAY],
-                time: line_data[TIME],
-                location: line_data[LOCATION],
-                schedule: line_data[SCHEDULE],
-                name: line_data[NAME] + "," + line_data[NAME + 1],
-                phone: line_data[PHONE],
-                instructor: courseMap[line_data[CODE]] ?? "",
-                level: line_data[SERVICE_NAME],
-              });
+            if (series) {
+              const q = query(
+                collection(db, "students"),
+                where("uid", "==", user.uid),
+                where("service_name", "==", line_data[SERVICE_NAME]),
+                where("code", "==", line_data[CODE]),
+                where("day", "==", line_data[DAY]),
+                where("time", "==", line_data[TIME]),
+                where("location", "==", line_data[LOCATION]),
+                where("schedule", "==", line_data[SCHEDULE]),
+                where("name", "==", line_data[NAME + 1] + " " + line_data[NAME]),
+                where("phone", "==", line_data[PHONE])
+              );
+              const docSnap = await getDocs(q);
+              if (docSnap.docs.length > 0) {
+                const docRef = docSnap.docs[0].ref;
+                await updateDoc(docRef, {
+                  uid: user.uid,
+                  service_name: line_data[SERVICE_NAME],
+                  code: line_data[CODE],
+                  day: line_data[DAY],
+                  time: line_data[TIME],
+                  location: line_data[LOCATION],
+                  schedule: line_data[SCHEDULE],
+                  name: line_data[NAME + 1] + " " + line_data[NAME],
+                  phone: line_data[PHONE],
+                  instructor: courseMap[parseInt(line_data[CODE])] ?? "",
+                  level: line_data[SERVICE_NAME],
+                });
+              }
+              else {
+                addDoc(studentsRef, {
+                  uid: user.uid,
+                  service_name: line_data[SERVICE_NAME],
+                  code: line_data[CODE],
+                  day: line_data[DAY],
+                  time: line_data[TIME],
+                  location: line_data[LOCATION],
+                  schedule: line_data[SCHEDULE],
+                  name: line_data[NAME + 1] + " " + line_data[NAME],
+                  phone: line_data[PHONE],
+                  instructor: courseMap[parseInt(line_data[CODE])] ?? "",
+                  level: line_data[SERVICE_NAME],
+                });
+              }
             }
             else {
-              addDoc(studentsRef, {
-                uid: user.uid,
-                service_name: line_data[SERVICE_NAME],
-                code: line_data[CODE],
-                day: line_data[DAY],
-                time: line_data[TIME],
-                location: line_data[LOCATION],
-                schedule: line_data[SCHEDULE],
-                name: line_data[NAME] + "," + line_data[NAME + 1],
-                phone: line_data[PHONE],
-                instructor: courseMap[line_data[CODE]] ?? "",
-                level: line_data[SERVICE_NAME],
-              });
+              const q = query(
+                collection(db, "students"),
+                where("uid", "==", user.uid),
+                where("service_name", "==", line_data[SERVICE_NAME]),
+                where("code", "==", line_data[CODE]),
+                where("day", "==", line_data[DAY]),
+                where("time", "==", line_data[TIME]),
+                where("location", "==", line_data[LOCATION]),
+                where("schedule", "==", line_data[SCHEDULE]),
+                where("name", "==", line_data[NAME]),
+                where("phone", "==", line_data[PHONE])
+              );
+              const docSnap = await getDocs(q);
+              if (docSnap.docs.length > 0) {
+                const docRef = docSnap.docs[0].ref;
+                await updateDoc(docRef, {
+                  uid: user.uid,
+                  service_name: line_data[SERVICE_NAME],
+                  code: line_data[CODE],
+                  day: line_data[DAY],
+                  time: line_data[TIME],
+                  location: line_data[LOCATION],
+                  schedule: line_data[SCHEDULE],
+                  name: line_data[NAME],
+                  phone: line_data[PHONE],
+                  instructor: courseMap[parseInt(line_data[CODE])] ?? "",
+                  level: line_data[SERVICE_NAME],
+                });
+              }
+              else {
+                addDoc(studentsRef, {
+                  uid: user.uid,
+                  service_name: line_data[SERVICE_NAME],
+                  code: line_data[CODE],
+                  day: line_data[DAY],
+                  time: line_data[TIME],
+                  location: line_data[LOCATION],
+                  schedule: line_data[SCHEDULE],
+                  name: line_data[NAME],
+                  phone: line_data[PHONE],
+                  instructor: courseMap[parseInt(line_data[CODE])] ?? "",
+                  level: line_data[SERVICE_NAME],
+                });
+              }
             }
           }
           catch (error) {
@@ -200,21 +297,24 @@ async function storeInstructors(formData) {
       try {
         const q = query(
           collection(db, "instructors"),
-          where("uid", "==", user.uid)
+          where("uid", "==", user.uid),
+          where("day", "==", localStorage.getItem("selectedDay"))
         )
         const docSnap = await getDocs(q);
         if (docSnap.docs.length > 0) {
           const docRef = docSnap.docs[0].ref;
           await updateDoc(docRef, {
             name: instructors,
-            codes: codes
+            codes: codes,
+            day: localStorage.getItem("selectedDay"),
           });
         }
         else {
           addDoc(instructorsRef, {
             uid: user.uid,
             name: instructors,
-            codes: codes
+            codes: codes,
+            day: localStorage.getItem("selectedDay"),
           });
         }
       } catch (error) {
@@ -280,19 +380,19 @@ async function storeFormatOptions(formatOptions) {
             uid: user.uid,
             time_headers: formatOptions.includes("time_headers"),
             instructor_headers: formatOptions.includes("instructor_headers"),
-          course_headers: formatOptions.includes("course_headers"),
-          borders: formatOptions.includes("borders"),
-          center_time: formatOptions.includes("center_time"),
-          bold_time: formatOptions.includes("bold_time"),
-          center_course: formatOptions.includes("center_course"),
-          bold_course: formatOptions.includes("bold_course")
-        });
-      } 
-    }catch (error) {
-      console.error("Error adding document: ", error);
+            course_headers: formatOptions.includes("course_headers"),
+            borders: formatOptions.includes("borders"),
+            center_time: formatOptions.includes("center_time"),
+            bold_time: formatOptions.includes("bold_time"),
+            center_course: formatOptions.includes("center_course"),
+            bold_course: formatOptions.includes("bold_course")
+          });
+        }
+      } catch (error) {
+        console.error("Error adding document: ", error);
+      }
     }
-  }
-});
+  });
 
 }
 
@@ -324,7 +424,7 @@ async function loadFormatOptions() {
 }
 
 function formatMasterList(e) {
-  
+
   e.preventDefault();
 
   const form = document.getElementById("upload-form");
@@ -333,7 +433,7 @@ function formatMasterList(e) {
   let formatOptions = [];
 
   const formatButtons = document.getElementsByClassName("option-check");
-  
+
 
   try {
     console.log(formData.getAll("instructor_names[]"));
@@ -366,25 +466,25 @@ function formatMasterList(e) {
       method: "POST",
       body: formData
     })
-    .then(response => {
-      if (!response.ok) throw new Error("Request failed");
-      return response.blob(); // if backend sends a file (e.g. Excel)
-    })
-    .then(blob => {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "masterlist.xlsx"; // your desired file name
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    URL.revokeObjectURL(url);
-    })
-    
+      .then(response => {
+        if (!response.ok) throw new Error("Request failed");
+        return response.blob(); // if backend sends a file (e.g. Excel)
+      })
+      .then(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "masterlist.xlsx"; // your desired file name
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      })
+
   } catch (err) {
     console.error(err);
   }
-} 
+}
 
 
 document.getElementById("upload-form").addEventListener("submit", formatMasterList);

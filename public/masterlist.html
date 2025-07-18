@@ -15,32 +15,48 @@
 <body>
 
   <header id="header">
-    <div class="logo">
-        <a href="index.html"><h1>COB <br> AQUATICS</h1></a>
+    <div class="header-top">
+        <div class="logo">
+            <a href="index.html">
+                <h1>COB <br> AQUATICS</h1>
+            </a>
+        </div>
+        <div class="welcome-message">
+            <h2>Master List Maker</h2>
+            <p>Welcome, <span id="username">Guest</span></p>
+        </div>
+        <div class="sign-in-out">
+            <button id="sign-out-button" class="btn">Sign Out</button>
+        </div>
     </div>
-    <div class="welcome-message">
-        <h2>Master List Maker</h2>
-        <p>Welcome, <span id="username">Guest</span></p>
-    </div>
-    <div class="sign-in-out">
-        <button id="sign-out-button">Sign Out</button>
-    </div>
-</header>
-  <div class="main-content">
-    <div class="services" id="services">
-      <div class="service_button">
-        <a class="notcurrent" href="myteams.html">My Teams</a>
-      </div>
+    <div class="header-bottom">
+        <select class="select-btns" id="select-day-btn">
+            <option value="">Select Day</option>
+            <option value="Mo">Monday</option>
+            <option value="Tu">Tuesday</option>
+            <option value="We">Wednesday</option>
+            <option value="Th">Thursday</option>
+            <option value="Fr">Friday</option>
+            <option value="Sa">Saturday</option>
+            <option value="Su">Sunday</option>
+            <option value="Mo,Tu,We,Th,Fr">Mini Session</option>
+        </select>
+        <div class="service_button">
+            <a class="notcurrent" href="myteams.html">My Teams</a>
+        </div>
         <div class="service_button">
             <a class="notcurrent" href="schematic.html">Schematic</a>
         </div>
         <div class="service_button">
-            <a class="current" href="masterlist.html">Master List</a>
+            <a class="notcurrent" href="masterlist.html">Master List</a>
         </div>
         <div class="service_button">
             <a class="notcurrent" href="rosters.html">Rosters</a>
         </div>
     </div>
+
+</header>
+  <div class="main-content">
   <form id="upload-form">
     <!-- Drag & drop / file selector -->
     <div id="drop-zone" class="drop-zone">

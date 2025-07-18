@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,26 +8,41 @@
 
     <link rel="stylesheet" href="css/rosters.css">
     <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script type="module" defer src="js/pages/roster.js"></script>
 </head>
+
 <body>
     <header id="header">
-        <div class="logo">
-            <a href="index.html"><h1>COB <br> AQUATICS</h1></a>
+        <div class="header-top">
+            <div class="logo">
+                <a href="index.html">
+                    <h1>COB <br> AQUATICS</h1>
+                </a>
+            </div>
+            <div class="welcome-message">
+                <h2>Class Rosters</h2>
+                <p>Welcome, <span id="username">Guest</span></p>
+            </div>
+            <div class="sign-in-out">
+                <button id="sign-out-button" class="btn">Sign Out</button>
+            </div>
         </div>
-        <div class="welcome-message">
-            <h2>Class Rosters</h2>
-            <p>Welcome, <span id="username">Guest</span></p>
-        </div>
-        <div class="sign-in-out">
-            <button id="sign-out-button" class="btn">Sign Out</button>
-        </div>
-    </header>
-
-    <div class="main-content">
-        <div class="services" id="services">
+        <div class="header-bottom">
+            <select class="select-btns" id="select-day-btn">
+                <option value="">Select Day</option>
+                <option value="Mo">Monday</option>
+                <option value="Tu">Tuesday</option>
+                <option value="We">Wednesday</option>
+                <option value="Th">Thursday</option>
+                <option value="Fr">Friday</option>
+                <option value="Sa">Saturday</option>
+                <option value="Su">Sunday</option>
+                <option value="Mo,Tu,We,Th,Fr">Mini Session</option>
+            </select>
             <div class="service_button">
                 <a class="notcurrent" href="myteams.html">My Teams</a>
             </div>
@@ -37,18 +53,68 @@
                 <a class="notcurrent" href="masterlist.html">Master List</a>
             </div>
             <div class="service_button">
-                <a class="current" href="rosters.html">Rosters</a>
+                <a class="notcurrent" href="rosters.html">Rosters</a>
             </div>
         </div>
 
+    </header>
+
+    <div class="main-content">
         <div class="button-and-content">
-            <button type="button" class="btn" id="print-all-btn">Print All</button>
-            <button type="button" class="btn" id="clear-all-btn">Clear All</button>
+            <div class="buttons">
+                <button type="button" class="btn" id="print-all-btn">Print All</button>
+                <button type="button" class="btn" id="clear-all-btn">Clear All</button>
+                <button type="button" class="option-check" id="multi-select-btn">Multi-Select</button>
+            </div>
+            <div class="selected-options">
+                <select id="filter-by-instructor-btn" class="instructor-select" style='appearance: none; -webkit-appearance: none; -moz-appearance: none; background-color: #2196F3; color: white; border: none; border-radius: 8px; padding: 0.6vw 2.5vw 0.6vw 0.8vw; font-size: 0.9vw; cursor: pointer; width: 100%; text-align: center; text-align-last: center; -moz-text-align-last: center; -webkit-text-align-last: center; background-image: url("data:image/svg+xml;utf8,<svg fill=\'white\' height=\'24\' viewBox=\'0 0 24 24\' width=\'24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\' /><path d=\'M0 0h24v24H0z\' fill=\'none\' /></svg>"); background-repeat: no-repeat; background-position: calc(100% - 8px) center; background-size: 16px; transition: background-color 0.2s ease;'>
+                    <option value="">Filter Classes by Instructor</option>
+                    <!-- Instructors will be loaded here -->
+                </select>
+                <select id="change-selected-level-btn" class="level-select" disabled>
+                    <option value="">Change All Selected Levels</option>
+                    <optgroup label="Little Splash">
+                        <option value="LittleSplash1">Little Splash 1</option>
+                        <option value="LittleSplash2">Little Splash 2</option>
+                        <option value="LittleSplash3">Little Splash 3</option>
+                        <option value="LittleSplash4">Little Splash 4</option>
+                        <option value="LittleSplash5">Little Splash 5</option>
+                    </optgroup>
+                    <optgroup label="Parent and Tot">
+                        <option value="ParentandTot1">Parent and Tot 1</option>
+                        <option value="ParentandTot2">Parent and Tot 2</option>
+                        <option value="ParentandTot3">Parent and Tot 3</option>
+                    </optgroup>
+                    <optgroup label="Splash">
+                        <option value="Splash1">Splash 1</option>
+                        <option value="Splash2A">Splash 2A</option>
+                        <option value="Splash2B">Splash 2B</option>
+                        <option value="Splash3">Splash 3</option>
+                        <option value="Splash4">Splash 4</option>
+                        <option value="Splash5">Splash 5</option>
+                        <option value="Splash6">Splash 6</option>
+                        <option value="Splash7">Splash 7</option>
+                        <option value="Splash8">Splash 8</option>
+                        <option value="Splash9">Splash 9</option>
+                        <option value="SplashFitness">Splash Fitness</option>
+                    </optgroup>
+                    <optgroup label="Teen/Adult">
+                        <option value="SwimTeenAdult1">Teen/Adult 1</option>
+                        <option value="SwimTeenAdult2">Teen/Adult 2</option>
+                        <option value="SwimTeenAdult3">Teen/Adult 3</option>
+                    </optgroup>
+                </select>
+                <select id="change-selected-instructor-btn" class="instructor-select" style='appearance: none; -webkit-appearance: none; -moz-appearance: none; background-color: #2196F3; color: white; border: none; border-radius: 8px; padding: 0.6vw 2.5vw 0.6vw 0.8vw; font-size: 0.9vw; cursor: pointer; width: 100%; text-align: center; text-align-last: center; -moz-text-align-last: center; -webkit-text-align-last: center; background-image: url("data:image/svg+xml;utf8,<svg fill=\'white\' height=\'24\' viewBox=\'0 0 24 24\' width=\'24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\' /><path d=\'M0 0h24v24H0z\' fill=\'none\' /></svg>"); background-repeat: no-repeat; background-position: calc(100% - 8px) center; background-size: 16px; transition: background-color 0.2s ease;'>
+                    <option value="">Change All Selected Instructors</option>
+                    <!-- Instructors will be loaded here -->
+                </select>
+            </div>
             <div id="main-content">
                 <div id="rosters"></div>
-                    <!-- Main content will be dynamically inserted here by roster.js -->
+                <!-- Main content will be dynamically inserted here by roster.js -->
             </div>
         </div>
     </div>
 </body>
+
 </html>

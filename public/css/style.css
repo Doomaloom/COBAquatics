@@ -35,8 +35,7 @@
 
 header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   padding: 1vw;
   background-color: var(--primary-color);
   border-radius: 24px;
@@ -45,6 +44,68 @@ header {
   height: fit-content;
 }
 
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 1rem;
+  width: 100%;
+}
+
+.header-bottom > * {
+  flex: 1;
+  min-width: 0;
+}
+
+#select-day-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 100%;
+  padding: 0.8vw 2.5vw 0.8vw 0.8vw;
+  margin: 0.5vw 0;
+  border: 2px solid var(--secondary-color);
+  border-radius: 16px;
+  background-color: var(--accent-color);
+  color: var(--primary-color);
+  font-size: 1.1vw;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  text-align: center;
+}
+#select-day-btn option {
+  text-align: center;
+}
+#select-day-btn::-ms-expand {
+  display: none;
+}
+
+.service_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.75rem;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  text-align: center;
+  height: 100%;
+}
+
+.service_button a {
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  width: 100%;
+  display: block;
+  text-align: center;
+}
 
 
 .logo {

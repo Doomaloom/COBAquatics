@@ -23,9 +23,49 @@ import {
 
 
 
+let selected = [];
+let multiSelect = false;
 
 
 
+const toggleBtn = document.getElementsByClassName("option-check");
+Array.from(toggleBtn).forEach(btn => {
+    btn.addEventListener("click", () => {
+        btn.classList.toggle("selected");
+    });
+});
+
+const selectDayBtn = document.getElementById("select-day-btn");
+// runs as soon as the script loads
+const savedDay = localStorage.getItem("selectedDay") || "";
+window.day = savedDay;                 // makes existing code continue to work
+selectDayBtn.value = savedDay;         // reflect current choice in the UI
+selectDayBtn.addEventListener("change", () => {
+    window.day = selectDayBtn.value;
+    localStorage.setItem("selectedDay", selectDayBtn.value); // save choice
+    clearRosters();
+    loadRosters();
+    
+    console.log(selectDayBtn.value);
+});
+
+/* TODO: actually do this properly */
+const multiSelectBtn = document.getElementById("multi-select-btn");
+multiSelectBtn.addEventListener("click", () => {
+    multiSelect = !multiSelect;
+    
+});
+
+const changeSelectedLevelBtn = document.getElementById("change-selected-level-btn");
+changeSelectedLevelBtn.addEventListener("click", () => {
+    selected.forEach(roster => {
+        
+    });
+});
+
+const filterByInstructorBtn = document.getElementById("filter-by-instructor-btn");
+
+filterByInstructorBtn.addEventListener("change", applyInstructorFilter);
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -40,55 +80,71 @@ onAuthStateChanged(auth, (user) => {
             clearDB();
         });
         loadRosters();
+        loadInstructors(filterByInstructorBtn, "", "");
     } else {
         document.getElementById('username').textContent = 'Guest';
         window.location.href = "index.html";
     }
 });
 
+
+function applyInstructorFilter() {
+    const selectedInstructor = filterByInstructorBtn.value;
+    document.querySelectorAll("#main-content .roster").forEach(roster => {
+      const current = roster.querySelector(".instructor-select")?.value ?? "";
+      roster.style.display =
+        selectedInstructor === "" || current === selectedInstructor
+          ? ""
+          : "none";
+    });
+}
+
 async function clearDB() {
-    const user = auth.currentUser;
-    if (!user) return;
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            if (!confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
+                return;
+            }
 
-    if (!confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
-        return;
-    }
+            try {
+                // Create a batch
+                const batch = writeBatch(db);
 
-    try {
-        // Create a batch
-        const batch = writeBatch(db);
+                // Delete all student documents
+                const studentsQuery = query(
+                    collection(db, "students"),
+                    where("uid", "==", user.uid)
+                );
+                const studentsSnapshot = await getDocs(studentsQuery);
+                studentsSnapshot.forEach((doc) => {
+                    console.log(doc.data());
+                    batch.delete(doc.ref);
+                });
 
-        // Delete all student documents
-        const studentsQuery = query(
-            collection(db, "students"),
-            where("uid", "==", user.uid)
-        );
-        const studentsSnapshot = await getDocs(studentsQuery);
-        studentsSnapshot.forEach((doc) => {
-            batch.delete(doc.ref);
-        });
+                // Delete all instructor documents
+                const instructorsQuery = query(
+                    collection(db, "instructors"),
+                    where("uid", "==", user.uid)
+                );
+                const instructorsSnapshot = await getDocs(instructorsQuery);
+                instructorsSnapshot.forEach((doc) => {
+                    console.log(doc.data());
+                    batch.delete(doc.ref);
+                });
 
-        // Delete all instructor documents
-        const instructorsQuery = query(
-            collection(db, "instructors"),
-            where("uid", "==", user.uid)
-        );
-        const instructorsSnapshot = await getDocs(instructorsQuery);
-        instructorsSnapshot.forEach((doc) => {
-            batch.delete(doc.ref);
-        });
+                // Commit the batch
+                await batch.commit();
 
-        // Commit the batch
-        await batch.commit();
-        
-        // Show success message and reload
-        alert('All data has been cleared successfully.');
-        window.location.reload();
-        
-    } catch (err) {
-        console.error("Error clearing database:", err);
-        alert("An error occurred while clearing the database. Please try again.");
-    }
+                // Show success message and reload
+                alert('All data has been cleared successfully.');
+                window.location.reload();
+
+            } catch (err) {
+                console.error("Error clearing database:", err);
+                alert("An error occurred while clearing the database. Please try again.");
+            }
+        }
+    });
 }
 
 async function printRoster(code) {
@@ -98,7 +154,7 @@ async function printRoster(code) {
     const instructor = await getInstructor(code.trim());
     const session = await getSession(code.trim());
     const location = await getLocation(code.trim());
-    let level = await getLevel(code.trim());
+    let level = document.getElementById(code.trim() + "-level-select").value;//await getLevel(code.trim());
 
     const levelSanitized = level.trim().replace(/\s+/g, '');
 
@@ -151,10 +207,10 @@ async function printRoster(code) {
 }
 
 async function printAll() {
-   const rosters = document.querySelectorAll('.roster');
-   rosters.forEach(roster => {
-       printRoster(roster.id);
-   });
+    const rosters = document.querySelectorAll('.roster');
+    rosters.forEach(roster => {
+        printRoster(roster.id);
+    });
 }
 
 async function getClasslist(code) {
@@ -289,13 +345,19 @@ async function getLevel(code) {
     });
 }
 
+function clearRosters() {
+    const container = document.getElementById('main-content');
+    container.innerHTML = ``;
+}
+
 async function loadRosters() {
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             try {
                 const q = query(
                     collection(db, "students"),
-                    where("uid", "==", user.uid)
+                    where("uid", "==", user.uid),
+                    where("day", "==", localStorage.getItem("selectedDay"))
                 );
                 const querySnapshot = await getDocs(q);
 
@@ -307,11 +369,19 @@ async function loadRosters() {
                     querySnapshot.forEach(doc => {
                         const data = doc.data();
                         if (!classesMap.has(data.code)) {
+                            // initialise entry with roster-level fields
                             classesMap.set(data.code, {
                                 service_name: data.service_name,
                                 time: data.time,
+                                instructor: data.instructor ?? "", // store first seen instructor
                                 students: []
                             });
+                        } else {
+                            // If roster has no instructor yet but this student does, fill it
+                            const entry = classesMap.get(data.code);
+                            if (!entry.instructor && data.instructor) {
+                                entry.instructor = data.instructor;
+                            }
                         }
                         classesMap.get(data.code).students.push({
                             name: data.name,
@@ -343,7 +413,7 @@ async function loadRosters() {
 
                     // Create roster sections in sorted order
                     sortedClasses.forEach(classData => {
-                        createRoster(classData.service_name, classData.time, classData.code);
+                        createRoster(classData.service_name, classData.time, classData.code, classData.instructor);
 
                         // Add each student to the roster
                         classData.students.forEach(student => {
@@ -355,13 +425,25 @@ async function loadRosters() {
                             );
                         });
                     });
+
+                    // After all rosters are created, make sure current filter is applied
+                    applyInstructorFilter();
+
+                    const printBtns = document.getElementsByClassName('print-btn');
+
+                    // Attach click handler that looks up the closest roster container
+                    Array.from(printBtns).forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const rosterDiv = btn.closest('.roster');
+                            if (rosterDiv) {
+                                printRoster(rosterDiv.id);
+                            } else {
+                                console.error('Unable to find roster container for print');
+                            }
+                        });
+                    });
                 }
 
-                const printBtns = document.getElementsByClassName('print-btn');
-
-                Array.from(printBtns).forEach(btn => {
-                    btn.addEventListener('click', () => printRoster(btn.parentElement.id));
-                });
             } catch (error) {
                 console.error("Error loading rosters: ", error);
             }
@@ -369,15 +451,79 @@ async function loadRosters() {
     });
 }
 
-function createRoster(level, time, code) {
+function createRoster(level, time, code, instructor) {
     const div = document.createElement("div");
     div.className = "roster";
     div.id = code;
     div.innerHTML = `
-    <h2>${level} - ${time}</h2>
-    <button type="button" class="print-btn" id="print-btn">Print</button>
+    <div class="roster-header-upper">
+        <h2>${level} : ${time}</h2>
+        <button type="button" class="print-btn" id="print-btn">Print</button>
+    </div>
+    <div class="roster-header-lower">
+        <select class="instructor-select" style="
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-color: #2196F3;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.6vw 2.5vw 0.6vw 0.8vw;
+        font-size: 0.9vw;
+        cursor: pointer;
+        width: 100%;
+        text-align: center;
+        text-align-last: center;
+        -moz-text-align-last: center;
+        -webkit-text-align-last: center;
+        background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+        background-repeat: no-repeat;
+        background-position: calc(100% - 8px) center;
+        background-size: 16px;
+        transition: background-color 0.2s ease;
+    ">
+        <option id="instructor-select" value="${instructor ?? ""}">${instructor ?? "Select Instructor"}</option>
+        <!-- Instructors will be loaded here -->
+    </select>
+        <select class="level-select" id="${code.trim()}-level-select">
+        <option value="${level}">${level}</option>
+        <optgroup label="Little Splash">
+          <option value="LittleSplash1">Little Splash 1</option>
+          <option value="LittleSplash2">Little Splash 2</option>
+          <option value="LittleSplash3">Little Splash 3</option>
+          <option value="LittleSplash4">Little Splash 4</option>
+          <option value="LittleSplash5">Little Splash 5</option>
+        </optgroup>
+        <optgroup label="Parent and Tot">
+          <option value="ParentandTot1">Parent and Tot 1</option>
+          <option value="ParentandTot2">Parent and Tot 2</option>
+          <option value="ParentandTot3">Parent and Tot 3</option>
+        </optgroup>
+        <optgroup label="Splash">
+          <option value="Splash1">Splash 1</option>
+          <option value="Splash2A">Splash 2A</option>
+          <option value="Splash2B">Splash 2B</option>
+          <option value="Splash3">Splash 3</option>
+          <option value="Splash4">Splash 4</option>
+          <option value="Splash5">Splash 5</option>
+          <option value="Splash6">Splash 6</option>
+          <option value="Splash7">Splash 7</option>
+          <option value="Splash8">Splash 8</option>
+          <option value="Splash9">Splash 9</option>
+          <option value="SplashFitness">Splash Fitness</option>
+        </optgroup>
+        <optgroup label="Teen/Adult">
+          <option value="SwimTeenAdult1">Teen/Adult 1</option>
+          <option value="SwimTeenAdult2">Teen/Adult 2</option>
+          <option value="SwimTeenAdult3">Teen/Adult 3</option>
+        </optgroup>
+    </select>
+    <div class="students">
+    </div>
     
   `;
+  loadInstructors(div, instructor, code);
 
     const container = document.getElementById('main-content');
     container.appendChild(div);
@@ -385,6 +531,7 @@ function createRoster(level, time, code) {
 
 function addStudentToRoster(roster, student, instructor, level) {
     const div = document.createElement("div");
+
     div.className = "student";
     div.innerHTML = `
     <p>${student}</p>
@@ -410,7 +557,7 @@ function addStudentToRoster(roster, student, instructor, level) {
         background-size: 16px;
         transition: background-color 0.2s ease;
     ">
-        <option value="">Select an instructor</option>
+        <option id="instructor-select" value="${instructor}">${instructor}</option>
         <!-- Instructors will be loaded here -->
     </select>
     <select class="level-select">
@@ -447,19 +594,19 @@ function addStudentToRoster(roster, student, instructor, level) {
         </optgroup>
     </select>
   `;
-    
+
     const container = document.getElementById(roster);
     container.appendChild(div);
-    
+
     // Load instructors into the dropdown
     loadInstructors(div, instructor, roster);
-    
+
     // Get reference to the select elements
     const levelSelect = div.querySelector('.level-select');
-    
+
     // Set the initial selected value
     levelSelect.value = level;
-    
+
     // Handle level selection change
     levelSelect.addEventListener('change', async (e) => {
         const newLevel = e.target.value;
@@ -480,7 +627,7 @@ function addStudentToRoster(roster, student, instructor, level) {
                 );
 
                 const querySnapshot = await getDocs(q);
-                
+
                 if (!querySnapshot.empty) {
                     const docRef = doc(db, 'students', querySnapshot.docs[0].id);
                     await updateDoc(docRef, {
@@ -508,22 +655,22 @@ async function loadInstructors(container, currentInstructor, roster) {
         }
 
         // Get the instructor select element
-        const instructorSelect = container.querySelector('.instructor-select');
-        
+        const instructorSelect = container.querySelector('.instructor-select') ?? container;
+
         // Get instructors from the database
         const instructorsRef = collection(db, 'instructors');
-        const q = query(instructorsRef, where('uid', '==', user.uid));
+        const q = query(instructorsRef, where('uid', '==', user.uid), where('day', '==', localStorage.getItem("selectedDay")));
         const querySnapshot = await getDocs(q);
-        
+
         if (!querySnapshot.empty) {
             const instructorsData = querySnapshot.docs[0].data();
             const instructors = instructorsData.name || [];
-            
+
             // Clear existing options except the first one
             while (instructorSelect.options.length > 1) {
                 instructorSelect.remove(1);
             }
-            
+
             // Add instructors to the dropdown
             instructors.forEach(instructor => {
                 if (instructor) { // Skip empty or undefined instructors
@@ -534,38 +681,44 @@ async function loadInstructors(container, currentInstructor, roster) {
                     instructorSelect.appendChild(option);
                 }
             });
-            
-            // Set up change handler for instructor selection
-            instructorSelect.addEventListener('change', async (e) => {
-                const newInstructor = e.target.value;
-                if (newInstructor) {
-                    try {
-                        const studentsRef = collection(db, 'students');
-                        const studentName = container.querySelector('p').textContent;
-                        const q = query(
-                            studentsRef,
-                            where('uid', '==', user.uid),
-                            where('name', '==', "\"" + studentName + "\""),
-                            where('code', '==', roster)
-                        );
 
-                        const querySnapshot = await getDocs(q);
-                        
-                        if (!querySnapshot.empty) {
-                            const docRef = doc(db, 'students', querySnapshot.docs[0].id);
-                            await updateDoc(docRef, {
-                                instructor: newInstructor
-                            });
-                            console.log(`Successfully updated ${studentName}'s instructor to ${newInstructor}`);
-                        } else {
-                            console.error('No matching student found to update');
+            // If a specific roster code is supplied we allow editing; otherwise
+            // this is the page-level filter dropdown and we skip Firestore
+            // updates to avoid null errors.
+            if (roster) {
+                instructorSelect.addEventListener('change', async (e) => {
+                    const newInstructor = e.target.value;
+                    if (newInstructor) {
+                        try {
+                            const studentsRef = collection(db, 'students');
+                            const studentNameEl = container.querySelector('p');
+                            if (!studentNameEl) return; // safety guard
+                            const studentName = studentNameEl.textContent;
+                            const q = query(
+                                studentsRef,
+                                where('uid', '==', user.uid),
+                                where('name', '==', "\"" + studentName + "\""),
+                                where('code', '==', roster)
+                            );
+
+                            const querySnapshot = await getDocs(q);
+
+                            if (!querySnapshot.empty) {
+                                const docRef = doc(db, 'students', querySnapshot.docs[0].id);
+                                await updateDoc(docRef, {
+                                    instructor: newInstructor
+                                });
+                                console.log(`Successfully updated ${studentName}'s instructor to ${newInstructor}`);
+                            } else {
+                                console.error('No matching student found to update');
+                            }
+                        } catch (error) {
+                            console.error('Error updating instructor:', error);
+                            alert('Failed to update instructor. Please try again.');
                         }
-                    } catch (error) {
-                        console.error('Error updating instructor:', error);
-                        alert('Failed to update instructor. Please try again.');
                     }
-                }
-            });
+                });
+            }
         }
     } catch (error) {
         console.error('Error loading instructors:', error);

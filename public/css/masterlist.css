@@ -168,20 +168,20 @@ legend {
     cursor: pointer;
     border: 2px solid var(--secondary-color);
     border-radius: 16px;
-    background-color: var(--accent-color);
+    background-color: var(--secondary-color);
     padding: 0.5vw;
-    color: var(--secondary-color);
+    color: var(--accent-color);
     font-size: 1vw;
     transition: var(--transition);
 }
 .option-check.selected {
-    background-color: var(--secondary-color);
-    color: var(--accent-color);
-    border: 2px dashed var(--accent-color);
+    background-color: var(--accent-color);
+    color: var(--secondary-color);
+    border: 2px dashed var(--secondary-color);
 }
 .option-check:hover {
-    background-color: var(--secondary-color);
-    color: var(--accent-color);
+    background-color: var(--accent-color);
+    color: var(--secondary-color);
     transform: translateY(-2px);
 }
 fieldset {
