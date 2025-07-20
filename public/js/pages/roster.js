@@ -45,7 +45,7 @@ selectDayBtn.addEventListener("change", () => {
     localStorage.setItem("selectedDay", selectDayBtn.value); // save choice
     clearRosters();
     loadRosters();
-    
+    loadInstructors(filterByInstructorBtn, "", "");
     console.log(selectDayBtn.value);
 });
 
@@ -156,7 +156,13 @@ async function printRoster(code) {
     const location = await getLocation(code.trim());
     let level = document.getElementById(code.trim() + "-level-select").value;//await getLevel(code.trim());
 
-    const levelSanitized = level.trim().replace(/\s+/g, '');
+
+    if ((level.includes("Adult") || level.includes("Teen")) && !level.includes("TeenAdult")) {
+        let levelWords = level.split(/[\s/]+/);
+        console.log(levelWords);
+        level = "TeenAdult" + levelWords[2];
+    }
+    const levelSanitized = level.trim().replace(/\s+|\//g, '');
 
     const iframe = document.createElement('iframe');
     iframe.style.display = 'none';
@@ -514,9 +520,9 @@ function createRoster(level, time, code, instructor) {
           <option value="SplashFitness">Splash Fitness</option>
         </optgroup>
         <optgroup label="Teen/Adult">
-          <option value="SwimTeenAdult1">Teen/Adult 1</option>
-          <option value="SwimTeenAdult2">Teen/Adult 2</option>
-          <option value="SwimTeenAdult3">Teen/Adult 3</option>
+          <option value="TeenAdult1">Teen/Adult 1</option>
+          <option value="TeenAdult2">Teen/Adult 2</option>
+          <option value="TeenAdult3">Teen/Adult 3</option>
         </optgroup>
     </select>
     <div class="students">
