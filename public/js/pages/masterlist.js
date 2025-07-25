@@ -27,9 +27,8 @@ selectDayBtn.value = savedDay;         // reflect current choice in the UI
 selectDayBtn.addEventListener("change", () => {
     window.day = selectDayBtn.value;
     localStorage.setItem("selectedDay", selectDayBtn.value); // save choice
-    clearRosters();
-    loadRosters();
-    loadInstructors(filterByInstructorBtn, "", "");
+    clearInstructors();
+    loadInstructors(selectDayBtn.value);
     console.log(selectDayBtn.value);
 });
 
@@ -37,7 +36,7 @@ onAuthStateChanged(auth, (user) => {
   if (user) {
     document.getElementById('username').textContent = user.email;
     loadFormatOptions();
-    loadInstructors();
+    loadInstructors(selectDayBtn.value);
   } else {
     document.getElementById('username').textContent = 'Guest';
     window.location.href = "index.html";
@@ -51,7 +50,10 @@ signOutButton.addEventListener("click", () => {
 });
 
 const addButton = document.getElementById('add-btn');
-addButton.addEventListener('click', addInstructorField);
+addButton.addEventListener('click', (e) => {
+  e.preventDefault();
+  addInstructorField();
+});
 
 const toggleBtn = document.getElementsByClassName("option-check");
 Array.from(toggleBtn).forEach(btn => {
@@ -90,8 +92,8 @@ function addInstructorField(name = "", codes = "") {
   const div = document.createElement('div');
   div.className = 'instructor-entry';
   div.innerHTML = `
-    <input type="text" name="instructor_names[]" placeholder="Instructor Name" value="${name}">
-    <input type="text" name="instructor_codes[]" placeholder="Classes (comma separated)" value="${codes}">
+    <input type="text" name="instructor_names[]" placeholder="Instructor Name" value="${name ?? ""}">
+    <input type="text" name="instructor_codes[]" placeholder="Classes (comma separated)" value="${codes ?? ""}">
     <button type="button" class="remove-btn">Remove</button>
   `;
   div.querySelector('.remove-btn').addEventListener('click', () => removeInstructorField(div));
@@ -324,14 +326,15 @@ async function storeInstructors(formData) {
   });
 }
 
-async function loadInstructors() {
+async function loadInstructors(day) {
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       let instructorsRef = collection(db, "instructors");
       try {
         const q = query(
           collection(db, "instructors"),
-          where("uid", "==", user.uid)
+          where("uid", "==", user.uid),
+          where("day", "==", day)
         )
         const docSnap = await getDocs(q);
         if (docSnap.docs.length > 0) {
@@ -349,6 +352,15 @@ async function loadInstructors() {
       }
     }
   });
+}
+
+function clearInstructors() {
+  document.getElementById("instructor-fields").innerHTML = `
+    <div class="instructor-entry">
+      <input type="text" name="instructor_names[]" placeholder="Instructor Name">
+      <input type="text" name="instructor_codes[]" placeholder="Classes (comma separated)">
+      <button type="button" class="remove-btn" type="button">Remove</button>
+    </div>`;
 }
 
 async function storeFormatOptions(formatOptions) {

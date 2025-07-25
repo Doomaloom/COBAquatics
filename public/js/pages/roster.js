@@ -154,15 +154,30 @@ async function printRoster(code) {
     const instructor = await getInstructor(code.trim());
     const session = await getSession(code.trim());
     const location = await getLocation(code.trim());
+    const startDate = await getStartDate(code.trim());
     let level = document.getElementById(code.trim() + "-level-select").value;//await getLevel(code.trim());
 
-
+    console.log(level);
     if ((level.includes("Adult") || level.includes("Teen")) && !level.includes("TeenAdult")) {
         let levelWords = level.split(/[\s/]+/);
         console.log(levelWords);
         level = "TeenAdult" + levelWords[2];
     }
-    const levelSanitized = level.trim().replace(/\s+|\//g, '');
+    let levelSanitized = level.trim().replace(/\s+|\//g, '');
+    console.log(levelSanitized);
+    if (levelSanitized.includes("Splash7")) {
+        console.log("Splash7");
+        levelSanitized = "Splash7";
+    }
+    if (levelSanitized.includes("Splash8")) {
+        console.log("Splash8");
+        levelSanitized = "Splash8";
+    }
+    if (levelSanitized.includes("Splash9")) {
+        console.log("Splash9");
+        levelSanitized = "Splash9";
+    }
+    
 
     const iframe = document.createElement('iframe');
     iframe.style.display = 'none';
@@ -182,7 +197,7 @@ async function printRoster(code) {
     iframe.onload = () => {
         const doc = iframe.contentDocument || iframe.contentWindow.document;
         doc.getElementById("instructor").textContent = instructor;
-        doc.getElementById("start_time").textContent = time;
+        doc.getElementById("start_time").textContent = startDate + " " + time;
         doc.getElementById("session").textContent = session;
         doc.getElementById("location").textContent = location;
         doc.getElementById("barcode").textContent = code;
@@ -191,10 +206,10 @@ async function printRoster(code) {
         const totalColumns = tbody.children.length;
         const emptyCells = totalColumns - 1;
 
-        students.forEach(name => {
+        students.forEach((name, index) => {
             const row = doc.createElement("tr");
             row.innerHTML = `
-              <td><strong style="font-family: Arial;">${name}</strong>
+              <td><strong style="font-family: Arial;">${index + 1}. ${name}</strong>
                 <font size="2"><br><span style="text-decoration: underline;">A</span>bsent/<span style="text-decoration: underline;">P</span>resent<br>
                 <span style="color: rgb(191, 191, 191);">[Day 1] [Day 2] [Day 3] [Day 4] [Day 5] [Day
 										6] [Day 7] [Day 8] [Day 9] [Day 10] [Day 11] [Day 12] [Day 13] [Day 14]</span></font>
@@ -351,6 +366,27 @@ async function getLevel(code) {
     });
 }
 
+async function getStartDate(code) {
+    return new Promise((resolve, reject) => {
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const q = query(
+                    collection(db, "students"),
+                    where("uid", "==", user.uid),
+                    where("code", "==", code)
+                );
+                const querySnapshot = await getDocs(q);
+
+                if (!querySnapshot.empty) {
+                    const data = querySnapshot.docs[0].data();
+                    resolve(data.schedule.split(" ")[1]);
+                }
+                resolve("");
+            }
+        });
+    });
+}
+
 function clearRosters() {
     const container = document.getElementById('main-content');
     container.innerHTML = ``;
@@ -393,6 +429,13 @@ async function loadRosters() {
                             name: data.name,
                             instructor: data.instructor
                         });
+                    });
+
+                    // Sort students alphabetically by name within each class
+                    classesMap.forEach(classData => {
+                        classData.students.sort((a, b) => 
+                            a.name.localeCompare(b.name, 'en', {sensitivity: 'base'})
+                        );
                     });
 
                     // Convert map to array and sort by time
