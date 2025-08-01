@@ -1,0 +1,79 @@
+/* Main content layout for schematic */
+.main-content {
+    display: flex;
+    flex-direction: row;
+    background-color: #dee2e6;
+    width: fit-content;
+    margin: 2vw;
+}
+
+/* Instructor headers */
+.instructor-header {
+    text-align: center;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    width: 8rem;
+    box-sizing: border-box;
+}
+
+.instructor-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background-color: white;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.instructor-input:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    max-width: fit-content;
+    box-sizing: border-box;
+}
+
+.column > .gap:first-child {
+    display: none;
+}
+
+.column > .instructor-header + .gap {
+    display: block;
+}
+
+/* Save button */
+.schematic-actions {
+    text-align: center;
+    margin: 2rem 0;
+    padding: 1rem;
+    border-top: 1px solid #dee2e6;
+}
+
+#save-schematic {
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#save-schematic:hover {
+    background-color: #218838;
+}
+
+#save-schematic:active {
+    background-color: #1e7e34;
+}
