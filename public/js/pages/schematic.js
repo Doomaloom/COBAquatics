@@ -109,6 +109,8 @@ onAuthStateChanged(auth, (user) => {
                         const columnDiv = document.createElement("div");
                         columnDiv.classList.add("column");
                         columnDiv.id = `column-${index}`;
+                        columnDiv.addEventListener('dragover', handleDragOver);
+                        columnDiv.addEventListener('drop', handleDrop);
                         
                         // Add instructor header
                         const instructorHeader = createInstructorHeader(index, ''); // Empty string for no default instructor
@@ -205,12 +207,12 @@ if (dropZone && fileInput) {
     }
 
     // Handle dropped files
-    dropZone.addEventListener('drop', handleDrop, false);
+    dropZone.addEventListener('drop', handleDrop1, false);
     dropZone.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', handleFileSelect);
 }
 
-function handleDrop(e) {
+function handleDrop1(e) {
     const dt = e.dataTransfer;
     const files = dt.files;
     handleFiles(files);
@@ -228,12 +230,6 @@ function handleFiles(files) {
         console.log("File selected:", file.name);
     }
 }
-
-// Add this near the top of your file, after other imports
-const INSTRUCTORS = [
-    'Instructor 1', 'Instructor 2', 'Instructor 3', 
-    'Instructor 4', 'Instructor 5', 'Instructor 6'
-];
 
 // Add this function to create an instructor header
 function createInstructorHeader(columnIndex, instructorName) {
@@ -441,27 +437,175 @@ async function loadInstructors(day) {
 
 async function createCodeField(code) {
     const codeEntry = document.createElement('div');
-    codeEntry.classList.add('code-entry');
+    codeEntry.classList.add('code-entry', 'draggable');
     codeEntry.id = code;
+    codeEntry.draggable = true;
+    codeEntry.dataset.code = code;
+
+    // Store course data as data attributes for drag and drop
+    const runningTime = await getRunningTime(code);
+    const startTime = await getStartTime(code);
+    const endTime = await getEndTime(code);
+    const level = await getLevel(code);
+    
+    codeEntry.dataset.runningTime = runningTime;
+    codeEntry.dataset.startTime = startTime;
+    codeEntry.dataset.endTime = endTime;
+    codeEntry.dataset.level = level;
 
     codeEntry.style.display = "flex";
     codeEntry.style.flexDirection = "column";
     codeEntry.style.width = "8rem";
-    codeEntry.style.height = `${await getRunningTime(code) / 5}rem`;
+    codeEntry.style.height = `${runningTime / 5}rem`;
     codeEntry.style.backgroundColor = "white";
     codeEntry.style.border = "1px solid black";
+    codeEntry.style.marginBottom = "2px";
+    codeEntry.style.cursor = "move";
+    codeEntry.style.position = "relative";
 
     codeEntry.innerHTML = `
       <p>${code}</p>
-      <p>${await getLevel(code)}</p>
-      <p>${await getRunningTime(code)}</p>
-      <p>${await getStartTime(code)}</p>
-      <p>${await getEndTime(code)}</p>
+      <p>${level}</p>
+      <p>${runningTime} min</p>
+      <p>${startTime} - ${endTime}</p>
     `;
+
+    // Add drag event listeners
+    codeEntry.addEventListener('dragstart', handleDragStart);
+    codeEntry.addEventListener('dragend', handleDragEnd);
+    codeEntry.addEventListener('dragenter', handleDragEnter);
+    codeEntry.addEventListener('dragleave', handleDragLeave);
+
     return codeEntry;
 }
 
-async function getGap(startTime, endTime) {
+// Global variables for drag and drop
+let draggedItem = null;
+
+function handleDragStart(e) {
+    draggedItem = this;
+    this.style.opacity = '0.5';
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', this.innerHTML);
+}
+
+function handleDragOver(e) {
+    if (e.preventDefault) {
+        e.preventDefault();
+    }
+    e.dataTransfer.dropEffect = 'move';
+    return false;
+}
+
+function handleDragEnter(e) {
+    this.classList.add('drag-over');
+}
+
+function handleDragLeave() {
+    this.classList.remove('drag-over');
+}
+
+function handleDrop(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    
+    // Don't do anything if dropping the same item we're dragging
+    if (draggedItem === this) {
+        return false;
+    }
+
+    // Check if the swap is valid
+    if (findValidSwap(draggedItem, this) != null) {
+        // Swap the courses
+        swapCourses(draggedItem, findValidSwap(draggedItem, this));
+    }
+
+    return false;
+}
+
+function handleDragEnd() {
+    this.style.opacity = '1';
+    document.querySelectorAll('.column').forEach(item => {
+        item.classList.remove('drag-over');
+    });
+}
+
+//source is a code entry, target is a column
+function findValidSwap(source, target) {
+    const sourceTime = source.dataset.runningTime;
+    const sourceStart = source.dataset.startTime;
+    const sourceEnd = source.dataset.endTime;
+    
+    let swaps = [];
+
+    for (let i = 1; i < target.children.length; i++) {
+        const child = target.children[i];
+        const childTime = child.dataset.runningTime;
+        const childStart = child.dataset.startTime;
+        const childEnd = child.dataset.endTime;
+
+        console.log("Child start: ", childStart);
+        console.log("Source end: ", sourceEnd);
+        console.log("Gap: ", getGap(childStart, sourceEnd));
+        
+        if (childTime == sourceTime && childStart == sourceStart && childEnd == sourceEnd) {
+            console.log("Valid swap found", child.dataset.level);
+            return [child];
+        }
+        else if (childStart == sourceStart) {
+            console.log("Same start time");
+            swaps.push(child);
+        }  
+        else if (swaps.length > 0 && getGap(childStart, sourceEnd) >= 0) {
+            console.log("Gap found");
+            swaps.push(child);
+            console.log("Swaps: ", swaps.length);
+            if (childEnd == sourceEnd || i == target.children.length - 1) {
+                console.log("Valid swap found", swaps.length);
+                return swaps;
+            }
+        }
+    }
+    console.log("No valid swap found");
+    return null;
+}
+
+function swapCourses(source, targets) {
+    // Get parent elements
+    const sourceParent = source.parentNode;
+    const targetParent = targets[0].parentNode;
+
+    const sourceNextSibling = source.nextSibling;
+    const targetNextSibling = targets[targets.length - 1].nextSibling;
+    
+    if (targets.length == 1) {
+        sourceParent.insertBefore(targets[0], sourceNextSibling);
+        targetParent.insertBefore(source, targetNextSibling);
+        console.log("Swap successful");
+    } 
+    else {
+        for (let i = 0; i < targets.length; i++) {
+            sourceParent.insertBefore(targets[i], sourceNextSibling);
+            targetParent.insertBefore(source, targetNextSibling);
+        }
+        console.log("Swap successful");
+    }
+    
+    // Update the UI
+    updateCourseTimes();
+}
+
+function updateCourseTimes() {
+    // This function would update the start/end times of all courses
+    // based on their new positions in the DOM
+    // Implementation depends on how times are calculated in your app
+    console.log("Update course times after drag and drop");
+}
+
+function getGap(startTime, endTime) {
+    if (startTime == undefined || endTime == undefined) {
+        return null;
+    }
     const startHour = parseInt(startTime.split(':')[0]);
     const startMinute = parseInt(startTime.split(':')[1]);
     const endHour = parseInt(endTime.split(':')[0]);

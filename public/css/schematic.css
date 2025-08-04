@@ -77,3 +77,91 @@
 #save-schematic:active {
     background-color: #1e7e34;
 }
+
+/* Drag and Drop Styles */
+.code-entry {
+    transition: all 0.2s ease-in-out;
+    user-select: none;
+    z-index: 1;
+}
+
+.code-entry.dragging {
+    opacity: 0.5;
+    transform: scale(0.98);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.code-entry.drag-over {
+    border: 2px dashed #3498db;
+    background-color: #f0f8ff;
+    transform: scale(1.02);
+}
+.column.drag-over {
+    border: 2px dashed #3498db;
+    background-color: #f0f8ff;
+    transform: scale(1.02);
+}
+
+.column.drag-over::after {
+    content: 'Drop Here';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(52, 152, 219, 0.9);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    z-index: 10;
+}
+
+/* Visual feedback for valid/invalid drop targets */
+.code-entry.valid-drop {
+    border-left: 4px solid #2ecc71;
+}
+
+.code-entry.invalid-drop {
+    border-left: 4px solid #e74c3c;
+    cursor: not-allowed;
+}
+
+/* Course level indicators */
+.code-entry[data-level*="Beginner"] {
+    border-left: 4px solid #2ecc71;
+}
+
+.code-entry[data-level*="Intermediate"] {
+    border-left: 4px solid #f39c12;
+}
+
+.code-entry[data-level*="Advanced"] {
+    border-left: 4px solid #e74c3c;
+}
+
+/* Hover effects */
+.code-entry:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 2;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .code-entry {
+        font-size: 0.9em;
+    }
+    
+    .code-entry p {
+        margin: 2px 0;
+    }
+}
+
+/* Animation for successful drop */
+@keyframes dropSuccess {
+    0% { background-color: rgba(46, 204, 113, 0.1); }
+    100% { background-color: white; }
+}
+
+.code-entry.drop-success {
+    animation: dropSuccess 1s ease-in-out;
+}
